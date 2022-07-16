@@ -109,6 +109,7 @@ namespace Minecraft
 			if (blockCursorSprite && !viewingCraftScreen)
 			{
 				Renderer::drawTexture2D(*blockCursorSprite, -blockCursorSize * 0.5f, blockCursorSize, Styles::defaultStyle);
+
 			}
 
 			// Check if sprites loaded properly
@@ -603,6 +604,11 @@ namespace Minecraft
 			glm::vec2 craftingOutputSlotPosition = glm::vec2(middleRightX, middleRightY);
 			craftingOutputSlotPosition.x += (88.0f) * (1.0f / craftingInventoryPixelSize.x) * craftingInventorySize.x;
 			craftingSlotPositions[9] = craftingOutputSlotPosition;
+		}
+
+		static void initHeartPostitons()
+		{
+			
 		}
 
 		/// <summary>

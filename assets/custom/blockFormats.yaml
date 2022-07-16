@@ -215,6 +215,21 @@ acacia_planks:
   bottom: acacia_planks
   isSolid: true
   isTransparent: false
+iron_ore:
+  id: 30
+  side: iron_ore
+  top: iron_ore
+  bottom: iron_ore
+  isSolid: true
+  isTransparent: false
+furnace:
+  id: 31
+  side: furnace_side
+  top: furnace_top
+  front: furnace_front
+  bottom: furnace_top
+  isSolid: true
+  isTransparent: false
 
 # Items start at 32,000
 stick:
@@ -250,6 +265,7 @@ wooden_shovel:
   isItem: true
   itemPicture: wooden_shovel
   isStackable: false
+
 # Stone tools
 stone_pickaxe:
   id: 32006
@@ -276,15 +292,42 @@ stone_shovel:
   isItem: true
   itemPicture: stone_shovel
   isStackable: false
-ender_pearl:
+
+# Iron Tools
+iron_pickaxe:
   id: 32011
+  isItem: true
+  itemPicture: iron_pickaxe
+  isStackable: false
+iron_axe:
+  id: 32012
+  isItem: true
+  itemPicture: iron_axe
+  isStackable: false
+iron_hoe:
+  id: 32013
+  isItem: true
+  itemPicture: iron_hoe
+  isStackable: false
+iron_sword:
+  id: 32014
+  isItem: true
+  itemPicture: iron_sword
+  isStackable: false
+iron_shovel:
+  id: 32015
+  isItem: true
+  itemPicture: iron_shovel
+  isStackable: false
+ender_pearl:
+  id: 32016
   isItem: true
   itemPicture: ender_pearl
 ghast_tear:
-  id: 32012
+  id: 32017
   isItem: true
   itemPicture: ghast_tear
 ruby_pickaxe:
-  id: 32013
+  id: 32018
   isItem: true
   itemPicture: ruby_pickaxe

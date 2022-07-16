@@ -103,6 +103,7 @@ namespace Minecraft
 		const int numMainInventoryColumns = 9;
 		const int numMainInventorySlots = numMainInventoryRows * numMainInventoryColumns;
 		const int numTotalSlots = numMainInventorySlots + numHotbarSlots;
+		const int numHeartColums = 10;
 	}
 }
 

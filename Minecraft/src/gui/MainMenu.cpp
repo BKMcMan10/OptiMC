@@ -35,9 +35,10 @@ namespace Minecraft
 			resetState();
 
 			const robin_hood::unordered_map<std::string, Sprite>& menuSprites = Sprites::getSpritesheet("assets/images/hudSpritesheet.yaml");
+			const robin_hood::unordered_map<std::string, Sprite>& titleSprite = Sprites::getSpritesheet("assets/images/TitleSprite.yaml");
 
-			titleSize = glm::vec2(2.0f, 0.5f);
-			title = menuSprites.at(std::string("title"));
+			titleSize = glm::vec2(2.5f, 0.5f);
+			title = titleSprite.at(std::string("title"));
 
 			menuSkybox = Cubemap::generateCubemap(
 				"assets/images/menuSkybox/Top.png",

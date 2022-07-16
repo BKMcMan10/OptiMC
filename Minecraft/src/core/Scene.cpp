@@ -253,9 +253,9 @@ namespace Minecraft
 				newEvent.size = eventDataSize;
 				newEvent.freeData = freeData;
 				events.emplace(newEvent);
-			}
 		}
 
+			}
 		void queueMainEventKey(int key, int action)
 		{
 			if (!playFromEventFile)

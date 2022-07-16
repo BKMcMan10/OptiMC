@@ -34,6 +34,7 @@ namespace Minecraft
 		void update(Ecs::Registry& registry);
 
 		void setPlayerIfNeeded(bool forceOverride = false);
+
 	};
 }
 

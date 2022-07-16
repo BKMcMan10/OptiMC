@@ -500,13 +500,104 @@ namespace Minecraft
 			batch3DLines.addVertex(v);
 		}
 
-		void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style)
+		void drawTexturedBox(const glm::vec3& center, const glm::vec3& size, const TextureFormat& topTexture, const TextureFormat& sideTexture , const TextureFormat& bottomTexture)
 		{
 			// TODO: Do this in a better way... Maybe do sphere check before expensive box check
 			if (!cameraFrustum->isBoxVisible(center - (size * 0.5f), center + (size * 0.5f)))
 			{
 				return;
 			}
+
+			glm::vec4 center4 = glm::vec4{center, 1.0f};
+			glm::vec4 size4 = glm::vec4{ size, 1.0f };
+
+			glm::vec4 v0 = center4 - (size4 * 0.5f);
+			glm::vec4 v1 = v0 + glm::vec4(size.x, 0, 0, 1.0f);
+			glm::vec4 v2 = v0 + glm::vec4(0, 0, size.z, 1.0f);
+			glm::vec4 v3 = v0 + glm::vec4(size.x, 0, size.z, 1.0f);
+
+			glm::vec4 v4 = v0 + glm::vec4(0, size.y, 0, 1.0f);
+			glm::vec4 v5 = v1 + glm::vec4(0, size.y, 0, 1.0f);
+			glm::vec4 v6 = v2 + glm::vec4(0, size.y, 0, 1.0f);
+			glm::vec4 v7 = v3 + glm::vec4(0, size.y, 0, 1.0f);
+
+			const TextureFormat* spriteToUse[6] = {
+				&sideTexture,
+				&sideTexture,
+				&topTexture, &bottomTexture, &sideTexture, &sideTexture
+			};
+
+			for (int i = 0; i < 6; i++)
+			{
+				const TextureFormat* sprite = spriteToUse[i];
+
+				glm::vec2 uv0 = sprite->uvs[0];
+				glm::vec2 uv1 = sprite->uvs[1];
+				glm::vec2 uv2 = sprite->uvs[2];
+				glm::vec2 uv3 = sprite->uvs[3];
+
+				glm::vec3 normal = glm::vec3(size.x, size.y, size.z);
+
+				drawTexturedTriangle3D(v1, v2, v3, uv0, uv1, uv2, normal, sprite->texture);
+				drawTexturedTriangle3D(v1, v3, v4, uv0, uv2, uv3, normal, sprite->texture);
+
+				drawTexturedTriangle3D(v4, v5, v6, uv0, uv1, uv2, normal, sprite->texture);
+				drawTexturedTriangle3D(v7, v1, v2, uv0, uv2, uv3, normal, sprite->texture);
+			}
+
+			/*drawLine(v0, v1, style);
+			drawLine(v0, v2, style);
+			drawLine(v2, v3, style);
+			drawLine(v1, v3, style);
+
+			drawLine(v4, v5, style);
+			drawLine(v4, v6, style);
+			drawLine(v5, v7, style);
+			drawLine(v6, v7, style);
+
+			drawLine(v0, v4, style);
+			drawLine(v1, v5, style);
+			drawLine(v2, v6, style);
+			drawLine(v3, v7, style);*/
+			
+		}
+
+		void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style)
+		{
+			drawBox(center, size, style, glm::vec3{ 0, 0, 0 });
+		}
+
+		void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style, glm::vec3 rotation)
+		{
+			// TODO: Do this in a better way... Maybe do sphere check before expensive box check
+			if (!cameraFrustum->isBoxVisible(center - (size * 0.5f), center + (size * 0.5f)))
+			{
+				return;
+			}
+
+			
+
+			glm::vec4 center4 = glm::vec4{ center, 1.0f };
+			glm::vec4 size4 = glm::vec4{ size, 1.0f };
+
+/*			const glm::mat4 transformMatrix =
+				glm::rotate(
+					glm::translate(glm::mat4(1.0f), center),
+					glm::radians(rotation.y),
+					glm::vec3(0, 1, 0)
+				);
+*/
+			const glm::mat4 transformMatrix = glm::mat4(1.0f);
+
+			/*glm::vec3 v0 = center - (size * 0.5f);
+			glm::vec3 v1 = v0 + glm::vec3(size.x, 0, 0);
+			glm::vec3 v2 = v0 + glm::vec3(0, 0, size.z);
+			glm::vec3 v3 = v0 + glm::vec3(size.x, 0, size.z);
+
+			glm::vec3 v4 = v0 + glm::vec3(0, size.y, 0);
+			glm::vec3 v5 = v1 + glm::vec3(0, size.y, 0);
+			glm::vec3 v6 = v2 + glm::vec3(0, size.y, 0);
+			glm::vec3 v7 = v3 + glm::vec3(0, size.y, 0);*/
 
 			glm::vec3 v0 = center - (size * 0.5f);
 			glm::vec3 v1 = v0 + glm::vec3(size.x, 0, 0);
@@ -517,6 +608,35 @@ namespace Minecraft
 			glm::vec3 v5 = v1 + glm::vec3(0, size.y, 0);
 			glm::vec3 v6 = v2 + glm::vec3(0, size.y, 0);
 			glm::vec3 v7 = v3 + glm::vec3(0, size.y, 0);
+
+			glm::vec4 q0 = transformMatrix * glm::vec4{ v0, 1.0f };
+			glm::vec4 q1 = transformMatrix * glm::vec4{ v1, 1.0f };
+			glm::vec4 q2 = transformMatrix * glm::vec4{ v2, 1.0f };
+			glm::vec4 q3 = transformMatrix * glm::vec4{ v3, 1.0f };
+			glm::vec4 q4 = transformMatrix * glm::vec4{ v4, 1.0f };
+			glm::vec4 q5 = transformMatrix * glm::vec4{ v5, 1.0f };
+			glm::vec4 q6 = transformMatrix * glm::vec4{ v6, 1.0f };
+			glm::vec4 q7 = transformMatrix * glm::vec4{ v7, 1.0f };
+
+			v0 = glm::vec3{ q0[0] / q0[3], q0[1] / q0[3], q0[2] / q0[3] };
+			v1 = glm::vec3{ q1[0] / q1[3], q1[1] / q1[3], q1[2] / q1[3] };
+			v2 = glm::vec3{ q2[0] / q2[3], q2[1] / q2[3], q2[2] / q2[3] };
+			v3 = glm::vec3{ q3[0] / q3[3], q3[1] / q3[3], q3[2] / q3[3] };
+			v4 = glm::vec3{ q4[0] / q4[3], q4[1] / q4[3], q4[2] / q4[3] };
+			v5 = glm::vec3{ q5[0] / q5[3], q5[1] / q5[3], q5[2] / q5[3] };
+			v6 = glm::vec3{ q6[0] / q6[3], q6[1] / q6[3], q6[2] / q6[3] };
+			v7 = glm::vec3{ q7[0] / q7[3], q7[1] / q7[3], q7[2] / q7[3] };
+			
+
+/*			v0 = transformMatrix * v04;
+			v1 = transformMatrix * v14;
+			v2 = transformMatrix * v24;
+			v3 = transformMatrix * v34;
+			v4 = transformMatrix * v44;
+			v5 = transformMatrix * v54;
+			v6 = transformMatrix * v64;
+			v7 = transformMatrix * v74;
+*/
 
 			drawLine(v0, v1, style);
 			drawLine(v0, v2, style);
@@ -537,12 +657,14 @@ namespace Minecraft
 		void drawTexturedCube(const glm::vec3& center, const glm::vec3& size, const TextureFormat& sideSprite, const TextureFormat& topSprite, const TextureFormat& bottomSprite, float rotation)
 		{
 			glm::vec3 halfSize = size * 0.5f;
+			glm::vec4 size4 = {size, 1.0f};
+			glm::vec4 centeru4 = glm::vec4(center, 1.0f);
 			// TODO: Do this in a better way... Maybe do sphere check before expensive box check
 			if (cameraFrustum && !cameraFrustum->isBoxVisible(center - halfSize, center + halfSize))
 			{
 				return;
 			}
-
+			glm::vec4 v0 = centeru4 - (size4 * 0.5f);
 			const glm::vec4 offsets[6] = {
 				{1, 0, 0, 1},
 				{-1, 0, 0, 1},

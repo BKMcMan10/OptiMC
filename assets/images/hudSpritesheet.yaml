@@ -56,3 +56,24 @@ inventoryHud:
   uvSize:
     x: 216
     y: 194
+heartFull:
+  uvStart:
+    x: 3
+    y: 214
+  uvSize:
+    x: 9
+    y: 9
+heartHalf:
+  uvStart:
+    x: 3
+    y: 223
+  uvSize:
+    x: 9
+    y: 9
+heartNone:
+  uvStart:
+    x: 3
+    y: 232
+  uvSize:
+    x: 9
+    y: 9

@@ -447,13 +447,36 @@ namespace Minecraft
 				Inventory& inventory = registry->getComponent<Inventory>(player);
 				for (int i = 0; i < Player::numHotbarSlots; i++)
 				{
-					if (!inventory.slots[i].blockId)
+
+					if (inventory.hotbar[i].blockId == blockId && inventory.hotbar[i].count <= 64)
+					{
+						inventory.hotbar[i].count += 1;
+						break;
+					}
+					else if (!inventory.slots[i].blockId)
 					{
 						inventory.slots[i].blockId = blockId;
 						inventory.slots[i].count = blockCount;
 						break;
 					}
+
 				}
+
+				/*for (int f = 0; f < Player::numMainInventoryRows; f++)
+				{
+					if (inventory.slots[f].blockId == blockId)
+					{
+						inventory.slots[f].count += 1;
+						break;
+					}
+					else if (!inventory.slots[f].blockId)
+					{
+						inventory.slots[f].count = blockCount;
+						inventory.slots[f].count = blockId;
+						break;
+					}
+				}*/
+				
 			}
 		}
 

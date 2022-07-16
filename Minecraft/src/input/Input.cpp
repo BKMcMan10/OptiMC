@@ -139,6 +139,22 @@ namespace Minecraft
 			lastCharPressedData = codepoint;
 		}
 
+		bool isMouseHeldDown(int mouseButton)
+		{
+			bool held{};
+
+			if (isMousePressed(mouseButton))
+			{
+				held = true;
+			}
+			else if (!isMousePressed(mouseButton))
+			{
+				held = false;
+			}
+
+			return held;
+		}
+
 		bool isKeyPressed(int key)
 		{
 			g_logger_assert(key >= 0 && key < GLFW_KEY_LAST, "Invalid key.");

@@ -59,7 +59,9 @@ namespace Minecraft
 		// 3D Rendering stuff
 		void draw3DModel(const glm::vec3& position, const glm::vec3& scale, float rotation, const VoxelVertex* vertices, int verticesLength);
 		void drawLine(const glm::vec3& start, const glm::vec3& end, const Style& style);
+		void drawTexturedBox(const glm::vec3& center, const glm::vec3& size, const TextureFormat& topTexture, const TextureFormat& sideTexture, const TextureFormat& bottomTexture);
 		void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style);
+		void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style, glm::vec3 rotation);
 		void drawTexturedCube(const glm::vec3& center, const glm::vec3& size, const TextureFormat& sideSprite, const TextureFormat& topSprite, const TextureFormat& bottomSprite, float rotation = 0.0f);
 	}
 }

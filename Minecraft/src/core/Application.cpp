@@ -17,6 +17,14 @@
 #include "utils/Settings.h"
 #include "gui/Gui.h"
 #include "gui/GuiElements.h"
+#include "core/DataParser.h"
+#include "gameplay/HeartManager.h"
+#include <Windows.h>
+#include "Sounds/SoundDevice.h"
+#include "Sounds/SoundBuffer.h"
+#include "Sounds/SoundSource.h"
+//#include "core/UVMapper.h"
+//#include "core/Model.h"
 
 namespace Minecraft
 {
@@ -29,6 +37,7 @@ namespace Minecraft
 		static bool dumpScreenshot = false;
 		static bool screenshotMustBeSquare = false;
 		static std::string screenshotName = "";
+		static const Texture* text;
 
 		static Shader screenShader;
 		static GlobalThreadPool* globalThreadPool;
@@ -48,6 +57,25 @@ namespace Minecraft
 				g_logger_error("Error: Could not create window.");
 				return;
 			}
+
+			//DataParser creeper("assets/models/entity/creeper.jem");
+			/*TextureBuilder texture_builder;
+			Texture tex = TextureBuilder()
+				.setFormat(ByteFormat::RGBA8_UI)
+				.setMagFilter(FilterMode::Nearest)
+				.setMinFilter(FilterMode::Nearest)
+				.setFilepath("assets/generated/packedItemTextures.png") //assets/textures/entity/creeper/creeper.png
+				.generateMipmap()
+				.generateTextureObject()
+				.bindTextureObject()
+				.generate(true);	*/
+				
+
+			//UVMapper uvmapper;
+
+			//TextureFormat* tf = uvmapper.CreateUV(glm::vec3{ 3, 3, 3 }, glm::vec2{ 0, 16 }, &tex);
+
+			SoundDevice* mysounddevice = SoundDevice::get();
 
 			// Initialize all other subsystems
 			globalThreadPool = new GlobalThreadPool(std::thread::hardware_concurrency());
@@ -153,6 +181,12 @@ namespace Minecraft
 					float one = 1;
 					glClearBufferfv(GL_DEPTH, 0, &one);
 					Scene::update();
+
+					/*if (Input::isKeyPressed(GLFW_KEY_W))
+					{
+						bool walkingSound = PlaySound(TEXT("assets/sounds/blocks/grass.wav"), NULL, SND_SYNC);
+					}*/
+					
 
 					// Unbind all framebuffers and render the composited image
 					glDisable(GL_DEPTH_TEST);

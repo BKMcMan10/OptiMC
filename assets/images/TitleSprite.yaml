@@ -1,0 +1,9 @@
+texture:
+  filepath: assets/images/minecraft.png
+title:
+  uvStart: 
+    x: 0
+    y: 0
+  uvSize:
+    x: 275
+    y: 53

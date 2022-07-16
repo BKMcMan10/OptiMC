@@ -174,10 +174,22 @@ void main()
 	vec4 fragColor = (lightColor * vec4(fColor, 1.0)) * objectColor * vec4(uTint, 1.0);
 	
 	// Weight function
-	float weight = clamp(pow(min(1.0, fragColor.a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - gl_FragCoord.z * 0.9, 3.0), 1e-2, 3e3);
+	float weight = clamp(pow(min(1.0, fragColor.a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - gl_FragCoord.z * 0.9, 3.0), 1e-2, 3e3); 
+//	float weight = clamp( pow(1.0 - gl_FragCoord.z * 0.9, 3.0), 1e-2, 3e3 ); 
 	
+	float zflag = 0.0;
+
+	if (gl_FragCoord.z < 0.9878)
+	{
+		zflag = 1.0;
+	}
+	else
+	{
+		zflag = 0.01;
+	}
+
 	// Store pixel color accumulation
-	accumulation = vec4(fragColor.rgb * fragColor.a, fragColor.a) * weight;
+	accumulation = vec4(fragColor.rgb * fragColor.a, fragColor.a) * zflag;
 
 	// Store pixel revealage threshold
 	reveal = objectColor.a;

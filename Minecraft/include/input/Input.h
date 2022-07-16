@@ -1,6 +1,7 @@
 #ifndef MINECRAFT_INPUT_H
 #define MINECRAFT_INPUT_H
 #include "core.h"
+#include "core/Application.h"
 
 namespace Minecraft
 {
@@ -36,6 +37,7 @@ namespace Minecraft
 		void processChar(unsigned int codepoint);
 		void processMouseScroll(float xoffset, float yoffset);
 
+		bool isMouseHeldDown(int mouseButton);
 		bool isKeyPressed(int key);
 		bool keyBeginPress(int key);
 		bool isMousePressed(int mouseButton);

@@ -83,6 +83,46 @@ stone_shovel:
     - [cobblestone]
     - [stick]
     - [stick]
+# Iron Tools
+
+iron_pickaxe:
+  outputCount: 1
+  recipe0:
+    - [iron_ore, iron_ore, iron_ore]
+    - [null,        stick,       null]
+    - [null,        stick,       null]
+iron_axe:
+  outputCount: 1
+  recipe0:
+    - [iron_ore, iron_ore]
+    - [iron_ore, stick]
+    - [null,        stick]
+  recipe1:
+    - [iron_ore, iron_ore]
+    - [stick,       iron_ore]
+    - [stick,       null]
+iron_hoe:
+  outputCount: 1
+  recipe0:
+    - [iron_ore, iron_ore]
+    - [stick,       null]
+    - [stick,       null]
+  recipe1:
+    - [iron_ore, iron_ore]
+    - [null,        stick]
+    - [null,        stick]
+iron_sword:
+  outputCount: 1
+  r0:
+    - [iron_ore]
+    - [iron_ore]
+    - [stick]
+iron_shovel:
+  outputCount: 1
+  r0:
+    - [iron_ore]
+    - [stick]
+    - [stick]
 # Logs to planks
 oak_planks:
   outputCount: 4
@@ -97,3 +137,17 @@ dark_oak_log:
   outputCount: 4
   recipe0:
     - [ghast_tear, ghast_tear]
+
+furnace:
+  outputCount: 1
+  recipe0:
+    - [stone, stone, stone]
+    - [stone, null, stone]
+    - [stone, stone, stone]
+
+ruby_pickaxe:
+    outputCount: 1
+    recipe0:
+    - [wooden_pickaxe, wooden_pickaxe, wooden_pickaxe]
+    - [null,        stick,       null]
+    - [null,        stick,       null]

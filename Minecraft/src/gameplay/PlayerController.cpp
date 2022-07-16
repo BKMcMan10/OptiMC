@@ -21,7 +21,11 @@
 #include "core/Scene.h"
 #include "core/Window.h"
 #include "network/Network.h"
-
+#include "gameplay/HeartManager.h"
+#include <math.h>
+#include "Sounds/SoundDevice.h"
+#include "Sounds/SoundBuffer.h"
+#include "Sounds/SoundSource.h"
 #include "utils/Constants.h"
 
 namespace Minecraft
@@ -61,7 +65,9 @@ namespace Minecraft
 		static const TextureFormat* sideSprite;
 		static const TextureFormat* topSprite;
 		static const TextureFormat* bottomSprite;
-
+		static const TextureFormat* side;
+		SoundSource mySpeaker;
+		uint32_t testSFX;
 		// Internal functions
 		static void updateSurvival(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory);
 		static void updateCreative(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory);
@@ -72,6 +78,9 @@ namespace Minecraft
 
 		void init()
 		{
+
+			
+			testSFX = SoundBuffer::get()->addSoundEffect("assets/sounds/blocks/spell.ogg");
 			blockHighlight = Styles::defaultStyle;
 			blockHighlight.color = "#00000067"_hex;
 			blockHighlight.strokeWidth = 0.01f;
@@ -81,6 +90,7 @@ namespace Minecraft
 			sideSprite = &BlockMap::getTextureFormat("oak_log");
 			topSprite = &BlockMap::getTextureFormat("oak_log_top");
 			bottomSprite = &BlockMap::getTextureFormat("oak_log_top");
+			side = &BlockMap::getTextureFormat("destroy_stage_1");
 
 			stick = Vertices::getItemModel("stick");
 		}
@@ -88,6 +98,11 @@ namespace Minecraft
 		void update(Ecs::Registry& registry)
 		{
 			setPlayerIfNeeded();
+
+			if (Input::isKeyPressed(GLFW_KEY_W))
+			{
+				mySpeaker.Play(testSFX);
+			}
 
 			if (playerId != Ecs::nullEntity && registry.hasComponent<Transform>(playerId) && registry.hasComponent<CharacterController>(playerId)
 				&& registry.hasComponent<Rigidbody>(playerId) && registry.hasComponent<Inventory>(playerId))
@@ -208,38 +223,224 @@ namespace Minecraft
 			if (forceOverride || playerId == Ecs::nullEntity || !registry->hasComponent<Tag>(playerId) ||
 				registry->getComponent<Tag>(playerId).type != TagType::Player)
 			{
-				playerId = World::getLocalPlayer();
-				if (registry->hasComponent<CharacterController>(playerId) && registry->hasComponent<Rigidbody>(playerId))
-				{
-					CharacterController& controller = registry->getComponent<CharacterController>(playerId);
-					Rigidbody& rb = registry->getComponent<Rigidbody>(playerId);
-					controller.controllerBaseSpeed = 4.4f;
-					controller.controllerRunSpeed = 6.2f;
-					rb.useGravity = true;
-					controller.lockedToCamera = true;
-					PlayerComponent& playerComp = registry->getComponent<PlayerComponent>(playerId);
-					gameMode = GameMode::Survival;
-					g_logger_info("Player controller found player: '%s'", playerComp.name);
-				}
+			playerId = World::getLocalPlayer();
+			if (registry->hasComponent<CharacterController>(playerId) && registry->hasComponent<Rigidbody>(playerId))
+			{
+				CharacterController& controller = registry->getComponent<CharacterController>(playerId);
+				Rigidbody& rb = registry->getComponent<Rigidbody>(playerId);
+				controller.controllerBaseSpeed = 4.4f;
+				controller.controllerRunSpeed = 6.2f;
+				rb.useGravity = true;
+				controller.lockedToCamera = true;
+				PlayerComponent& playerComp = registry->getComponent<PlayerComponent>(playerId);
+				gameMode = GameMode::Survival;
+				g_logger_info("Player controller found player: '%s'", playerComp.name);
+			}
 			}
 		}
+		glm::vec3 centerNow;
+		glm::vec3 centerLast;
+		float hardness = 0.65f;
+		bool viewNotChanged = false;
+		float time = hardness / 8;
+		bool in1 = true;
+		bool in2 = false;
+		bool in3 = false;
+		bool in4 = false;
+		bool in5 = false;
+		bool in6 = false;
+		bool in7 = false;
+		bool in8 = false;
+		float acceleration;
+		float fallTimer;
+		float damagefloat;
+
+		/*const glm::vec4 armVerts = {
+			{0, 0, 0},
+			{1, 0, 0},
+			{1, 0, 1},
+			{-1, 0, 1},
+
+			{0, -1.5, 0},
+			{1, -1.5, 0},
+			{1, -1.5, 1},
+			{-1, -1.5, 1}
+		};*/
+
+		/*const glm::vec4 armVerts2[2][4] = {
+			{{0, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 1, 0}, {1, 0, -1, 0}},
+			{{0, -2, 0, 0}, {1, -2, 0, 0}, {1, -2, 1, 0}, {1, -2, -1, 0}}
+		};*/
+
+		/*struct VoxelVertex
+		{
+			glm::vec3 position;
+			glm::u8vec4 color;
+		};*/
+
+		
 
 		static void updateSurvival(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory)
 		{
-			blockPlaceDebounce -= World::deltaTime;
+			HeartManager::Init();
 
+			HeartManager::Update();
+
+			//Sounds::PlaySound("grass.wav", 50);
+
+			blockPlaceDebounce -= World::deltaTime;
+			//Renderer::drawTexturedBox(transform.position + glm::vec3{0, 0, -1}, glm::vec3{ 0.4, 1.2, 0.4 }, *topSprite, *sideSprite, *topSprite);
+			Renderer::drawBox(transform.position + glm::vec3{ 0.14, 0.5, -0.37 }, glm::vec3{ 0.08, 0.08, 0.24 }, Minecraft::Styles::defaultStyle, glm::vec3{0, 15, 0});
 			//Renderer::draw3DModel(transform.position + (glm::vec3(0.0f, 0.0f, 1.0f) * -1.0f * 2.7f), glm::vec3(1.0f), 0.0f, stick.vertices, stick.verticesLength);
 			if (!MainHud::viewingCraftScreen && !CommandLine::isActive && !MainHud::isPaused)
-			{
+			{					
+				if (!rb.onGround)
+				{
+					fallTimer += 0.0087f;
+					acceleration += 0.045f;
+
+					std::cout << fallTimer << std::endl;
+						
+				}
+
+				if (rb.onGround && fallTimer <= 0.5)
+				{
+					fallTimer = 0.0f;
+
+					acceleration = 0.0f;
+				}
+				else if (rb.onGround && fallTimer >= 0.5)
+				{
+						
+					damagefloat = fallTimer * acceleration;
+
+					HeartManager::health -= damagefloat;
+
+					std::cout << damagefloat << std::endl;
+
+					fallTimer = 0;
+					acceleration = 0;
+				}
+					
 				RaycastStaticResult res = Physics::raycastStatic(transform.position + controller.cameraOffset, transform.forward, 5.0f);
 				if (res.hit)
 				{
 					glm::vec3 blockLookingAtPos = res.point - (res.hitNormal * 0.1f);
+
+					
+					
+					
+			
+
+					
+
+					centerNow = res.blockCenter;
+					
+
+					if (centerNow != centerLast)
+					{
+						hardness = 0.65f;
+						side = &BlockMap::getTextureFormat("destroy_stage_1");
+						in1 = true;
+					}
+
+					if (Input::isMouseHeldDown(GLFW_MOUSE_BUTTON_LEFT) && MainHud::viewingCraftScreen == false)
+					{
+
+						time -= 0.01f;
+
+						if (in1 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_1");
+							in1 = false;
+							in2 = true;
+							time = hardness / 8;
+						}
+						else if (in2 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_2");
+							in2 = false;
+							in3 = true;
+							time = hardness / 8;
+						}
+						else if (in3 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_3");
+							in3 = false;
+							in4 = true;
+							time = hardness / 8;
+						}
+						else if (in4 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_4");
+							in4 = false;
+							in5 = true;
+							time = hardness / 8;
+						}
+						else if (in5 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_5");
+							in5 = false;
+							in6 = true;
+							time = hardness / 8;
+						}
+						else if (in6 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_6");
+							in6 = false;
+							in7 = true;
+							time = hardness / 8;
+						}
+						else if (in7 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_7");
+							in7 = false;
+							in8 = true;
+							time = hardness / 8;
+						}
+						else if (in8 == true && time <= 0)
+						{
+							side = &BlockMap::getTextureFormat("destroy_stage_8");
+							in8 = false;
+							time = hardness / 8;
+						}
+
+						glm::vec3 worldPos = res.point - (res.hitNormal * 0.1f);
+						Block currBlockBroken2 = ChunkManager::getBlock(res.blockCenter);
+						if (inventory.hotbar[inventory.currentHotbarSlot].blockId == 32012 && currBlockBroken2.id == 6)
+						{
+							hardness -= 0.08f;
+							
+						}
+						else if (inventory.hotbar[inventory.currentHotbarSlot].blockId == 32011 && currBlockBroken2.id == 8)
+						{
+							hardness -= 0.08f;
+							
+						}
+						else
+						{
+							hardness -= 0.01f;
+							
+						}		
+
+						Renderer::drawTexturedCube(res.blockCenter, res.blockSize + glm::vec3{ 0.0005f, 0.0005f, 0.0005f }, *side, *side, *side);
+					}
+					else
+					{
+						hardness = 0.65f;
+						in1 = true;
+						side = &BlockMap::getTextureFormat("destroy_stage_1");
+					}
+
+					centerLast = res.blockCenter;
+
 					DebugStats::blockLookingAt = ChunkManager::getBlock(blockLookingAtPos);
 					DebugStats::airBlockLookingAt = ChunkManager::getBlock(res.point + (res.hitNormal * 0.1f));
 
 					// TODO: Clean this garbage up
 					Renderer::drawBox(res.blockCenter, res.blockSize + glm::vec3(0.005f, 0.005f, 0.005f), blockHighlight);
+					//Renderer::draw3DModel(transform.position, glm::vec3{ 1, 1, 1 }, 0, armVerts, 8);
+					//Renderer::drawTexturedCube(transform.position, res.blockSize - glm::vec3{ 0.3, 0.3, 0.3 }, * sideSprite, * topSprite, * topSprite);
 					//Renderer::drawBox(res.point, glm::vec3(0.1f, 0.1f, 0.1f), Styles::defaultStyle);
 					static float rotation = 0.0f;
 					static glm::vec3 verticalOffset = glm::vec3(0.0f);
@@ -258,6 +459,11 @@ namespace Minecraft
 					{
 						rotation = rotation / 360.0f;
 					}
+					
+					if (Input::isKeyPressed(GLFW_KEY_Q))
+					{
+						inventory.hotbar[inventory.currentHotbarSlot].blockId = 0;
+					}
 
 					if (Input::isMousePressed(GLFW_MOUSE_BUTTON_RIGHT) && blockPlaceDebounce <= 0)
 					{
@@ -270,6 +476,14 @@ namespace Minecraft
 						{
 							glm::vec3 worldPos = res.point + (res.hitNormal * 0.1f);
 							ChunkManager::setBlock(worldPos, newBlock);
+						
+							inventory.hotbar[inventory.currentHotbarSlot].count -= 1;
+							if (inventory.hotbar[inventory.currentHotbarSlot].count == 0)
+							{
+								inventory.hotbar[inventory.currentHotbarSlot].blockId = 0;
+							}
+							
+							
 							// If the network is enabled also send this across the network
 							if (Network::isNetworkEnabled())
 							{
@@ -280,10 +494,26 @@ namespace Minecraft
 							blockPlaceDebounce = blockPlaceDebounceTime;
 						}
 					}
-					else if (Input::isMousePressed(GLFW_MOUSE_BUTTON_LEFT) && blockPlaceDebounce <= 0)
+					else if (Input::isMousePressed(GLFW_MOUSE_BUTTON_LEFT) && blockPlaceDebounce <= 0 && hardness <= 0)
 					{
+
 						glm::vec3 worldPos = res.point - (res.hitNormal * 0.1f);
+
+						Ecs::EntityId player = World::getLocalPlayer();
+						Block currBlockBroken = ChunkManager::getBlock(worldPos);
+
+						if (!currBlockBroken.isNull())
+						{
+							World::givePlayerBlock(player, currBlockBroken.id, 1);
+						}
+
+						
+						hardness = 0.65f;
+
+						in1 = true;
+
 						ChunkManager::removeBlock(worldPos);
+					
 						// If the network is enabled also send this across the network
 						if (Network::isNetworkEnabled())
 						{
@@ -306,6 +536,8 @@ namespace Minecraft
 				controller.movementAxis.x =
 					Input::isKeyPressed(GLFW_KEY_W)
 					? 1.0f
+					: Input::isKeyPressed(GLFW_KEY_W && GLFW_KEY_LEFT_CONTROL)
+					? 3.5f
 					: Input::isKeyPressed(GLFW_KEY_S)
 					? -1.0f
 					: 0.0f;
@@ -343,6 +575,7 @@ namespace Minecraft
 					: CursorMode::Locked;
 				Application::getWindow().setCursorMode(mode);
 			}
+		
 		}
 
 		static void updateCreative(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory)
@@ -387,8 +620,16 @@ namespace Minecraft
 					else if (Input::isMousePressed(GLFW_MOUSE_BUTTON_LEFT) && blockPlaceDebounce <= 0)
 					{
 						glm::vec3 worldPos = res.point - (res.hitNormal * 0.1f);
-						ChunkManager::removeBlock(worldPos);
+
+						Block currBlockBroken = ChunkManager::getBlock(worldPos);
+						Ecs::EntityId player = World::getLocalPlayer();
+						if (!currBlockBroken.isNull() && currBlockBroken.id != 1)
+						{
+							World::givePlayerBlock(player, currBlockBroken.id, 1);
+						}
+
 						// If the network is enabled also send this across the network
+						ChunkManager::removeBlock(worldPos);
 						if (Network::isNetworkEnabled())
 						{
 							SizedMemory sizedMemory = pack<glm::vec3>(worldPos);
