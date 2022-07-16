@@ -75,7 +75,7 @@ namespace Minecraft
 
 			//TextureFormat* tf = uvmapper.CreateUV(glm::vec3{ 3, 3, 3 }, glm::vec2{ 0, 16 }, &tex);
 
-			SoundDevice* mysounddevice = SoundDevice::get();
+			//SoundDevice* mysounddevice = SoundDevice::get();
 
 			// Initialize all other subsystems
 			globalThreadPool = new GlobalThreadPool(std::thread::hardware_concurrency());

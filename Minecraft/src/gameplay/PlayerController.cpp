@@ -66,8 +66,8 @@ namespace Minecraft
 		static const TextureFormat* topSprite;
 		static const TextureFormat* bottomSprite;
 		static const TextureFormat* side;
-		SoundSource mySpeaker;
-		uint32_t testSFX;
+		//SoundSource mySpeaker;
+		//uint32_t testSFX;
 		// Internal functions
 		static void updateSurvival(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory);
 		static void updateCreative(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory);
@@ -78,9 +78,7 @@ namespace Minecraft
 
 		void init()
 		{
-
-			
-			testSFX = SoundBuffer::get()->addSoundEffect("assets/sounds/blocks/spell.ogg");
+			//testSFX = SoundBuffer::get()->addSoundEffect("assets/sounds/blocks/spell.ogg");
 			blockHighlight = Styles::defaultStyle;
 			blockHighlight.color = "#00000067"_hex;
 			blockHighlight.strokeWidth = 0.01f;
@@ -99,10 +97,10 @@ namespace Minecraft
 		{
 			setPlayerIfNeeded();
 
-			if (Input::isKeyPressed(GLFW_KEY_W))
+			/*if (Input::isKeyPressed(GLFW_KEY_W))
 			{
 				mySpeaker.Play(testSFX);
-			}
+			}*/
 
 			if (playerId != Ecs::nullEntity && registry.hasComponent<Transform>(playerId) && registry.hasComponent<CharacterController>(playerId)
 				&& registry.hasComponent<Rigidbody>(playerId) && registry.hasComponent<Inventory>(playerId))
@@ -223,19 +221,19 @@ namespace Minecraft
 			if (forceOverride || playerId == Ecs::nullEntity || !registry->hasComponent<Tag>(playerId) ||
 				registry->getComponent<Tag>(playerId).type != TagType::Player)
 			{
-			playerId = World::getLocalPlayer();
-			if (registry->hasComponent<CharacterController>(playerId) && registry->hasComponent<Rigidbody>(playerId))
-			{
-				CharacterController& controller = registry->getComponent<CharacterController>(playerId);
-				Rigidbody& rb = registry->getComponent<Rigidbody>(playerId);
-				controller.controllerBaseSpeed = 4.4f;
-				controller.controllerRunSpeed = 6.2f;
-				rb.useGravity = true;
-				controller.lockedToCamera = true;
-				PlayerComponent& playerComp = registry->getComponent<PlayerComponent>(playerId);
-				gameMode = GameMode::Survival;
-				g_logger_info("Player controller found player: '%s'", playerComp.name);
-			}
+				playerId = World::getLocalPlayer();
+				if (registry->hasComponent<CharacterController>(playerId) && registry->hasComponent<Rigidbody>(playerId))
+				{
+					CharacterController& controller = registry->getComponent<CharacterController>(playerId);
+					Rigidbody& rb = registry->getComponent<Rigidbody>(playerId);
+					controller.controllerBaseSpeed = 4.4f;
+					controller.controllerRunSpeed = 6.2f;
+					rb.useGravity = true;
+					controller.lockedToCamera = true;
+					PlayerComponent& playerComp = registry->getComponent<PlayerComponent>(playerId);
+					gameMode = GameMode::Survival;
+					g_logger_info("Player controller found player: '%s'", playerComp.name);
+				}
 			}
 		}
 		glm::vec3 centerNow;
@@ -278,8 +276,6 @@ namespace Minecraft
 			glm::u8vec4 color;
 		};*/
 
-		
-
 		static void updateSurvival(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory)
 		{
 			HeartManager::Init();
@@ -290,17 +286,16 @@ namespace Minecraft
 
 			blockPlaceDebounce -= World::deltaTime;
 			//Renderer::drawTexturedBox(transform.position + glm::vec3{0, 0, -1}, glm::vec3{ 0.4, 1.2, 0.4 }, *topSprite, *sideSprite, *topSprite);
-			Renderer::drawBox(transform.position + glm::vec3{ 0.14, 0.5, -0.37 }, glm::vec3{ 0.08, 0.08, 0.24 }, Minecraft::Styles::defaultStyle, glm::vec3{0, 15, 0});
+			Renderer::drawBox(transform.position + glm::vec3{ 0.14, 0.5, -0.37 }, glm::vec3{ 0.08, 0.08, 0.24 }, Minecraft::Styles::defaultStyle, glm::vec3{ 0, 15, 0 });
 			//Renderer::draw3DModel(transform.position + (glm::vec3(0.0f, 0.0f, 1.0f) * -1.0f * 2.7f), glm::vec3(1.0f), 0.0f, stick.vertices, stick.verticesLength);
 			if (!MainHud::viewingCraftScreen && !CommandLine::isActive && !MainHud::isPaused)
-			{					
+			{
 				if (!rb.onGround)
 				{
 					fallTimer += 0.0087f;
 					acceleration += 0.045f;
 
 					std::cout << fallTimer << std::endl;
-						
 				}
 
 				if (rb.onGround && fallTimer <= 0.5)
@@ -311,7 +306,6 @@ namespace Minecraft
 				}
 				else if (rb.onGround && fallTimer >= 0.5)
 				{
-						
 					damagefloat = fallTimer * acceleration;
 
 					HeartManager::health -= damagefloat;
@@ -321,21 +315,13 @@ namespace Minecraft
 					fallTimer = 0;
 					acceleration = 0;
 				}
-					
+
 				RaycastStaticResult res = Physics::raycastStatic(transform.position + controller.cameraOffset, transform.forward, 5.0f);
 				if (res.hit)
 				{
 					glm::vec3 blockLookingAtPos = res.point - (res.hitNormal * 0.1f);
 
-					
-					
-					
-			
-
-					
-
 					centerNow = res.blockCenter;
-					
 
 					if (centerNow != centerLast)
 					{
@@ -346,7 +332,6 @@ namespace Minecraft
 
 					if (Input::isMouseHeldDown(GLFW_MOUSE_BUTTON_LEFT) && MainHud::viewingCraftScreen == false)
 					{
-
 						time -= 0.01f;
 
 						if (in1 == true && time <= 0)
@@ -410,18 +395,15 @@ namespace Minecraft
 						if (inventory.hotbar[inventory.currentHotbarSlot].blockId == 32012 && currBlockBroken2.id == 6)
 						{
 							hardness -= 0.08f;
-							
 						}
 						else if (inventory.hotbar[inventory.currentHotbarSlot].blockId == 32011 && currBlockBroken2.id == 8)
 						{
 							hardness -= 0.08f;
-							
 						}
 						else
 						{
 							hardness -= 0.01f;
-							
-						}		
+						}
 
 						Renderer::drawTexturedCube(res.blockCenter, res.blockSize + glm::vec3{ 0.0005f, 0.0005f, 0.0005f }, *side, *side, *side);
 					}
@@ -459,7 +441,7 @@ namespace Minecraft
 					{
 						rotation = rotation / 360.0f;
 					}
-					
+
 					if (Input::isKeyPressed(GLFW_KEY_Q))
 					{
 						inventory.hotbar[inventory.currentHotbarSlot].blockId = 0;
@@ -476,14 +458,13 @@ namespace Minecraft
 						{
 							glm::vec3 worldPos = res.point + (res.hitNormal * 0.1f);
 							ChunkManager::setBlock(worldPos, newBlock);
-						
+
 							inventory.hotbar[inventory.currentHotbarSlot].count -= 1;
 							if (inventory.hotbar[inventory.currentHotbarSlot].count == 0)
 							{
 								inventory.hotbar[inventory.currentHotbarSlot].blockId = 0;
 							}
-							
-							
+
 							// If the network is enabled also send this across the network
 							if (Network::isNetworkEnabled())
 							{
@@ -496,7 +477,6 @@ namespace Minecraft
 					}
 					else if (Input::isMousePressed(GLFW_MOUSE_BUTTON_LEFT) && blockPlaceDebounce <= 0 && hardness <= 0)
 					{
-
 						glm::vec3 worldPos = res.point - (res.hitNormal * 0.1f);
 
 						Ecs::EntityId player = World::getLocalPlayer();
@@ -507,13 +487,12 @@ namespace Minecraft
 							World::givePlayerBlock(player, currBlockBroken.id, 1);
 						}
 
-						
 						hardness = 0.65f;
 
 						in1 = true;
 
 						ChunkManager::removeBlock(worldPos);
-					
+
 						// If the network is enabled also send this across the network
 						if (Network::isNetworkEnabled())
 						{
@@ -575,7 +554,6 @@ namespace Minecraft
 					: CursorMode::Locked;
 				Application::getWindow().setCursorMode(mode);
 			}
-		
 		}
 
 		static void updateCreative(Transform& transform, CharacterController& controller, Rigidbody& rb, Inventory& inventory)
